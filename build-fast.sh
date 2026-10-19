@@ -12,13 +12,13 @@ export ANDROID_SDK_ROOT="$ANDROID_HOME"
 
 MODE="${1:-all}"
 case "$MODE" in
-  main)    TASKS=":app:assembleDebug" ;;
-  release) TASKS=":app:assembleRelease :agent-companion:assembleRelease" ;;
-  *)       TASKS="apk" ;;
+  main)    TASKS=(":app:assembleDebug") ;;
+  release) TASKS=(":app:assembleRelease" ":agent-companion:assembleRelease") ;;
+  *)       TASKS=("apk") ;;
 esac
 
-echo ">> ./gradlew $TASKS"
-time ./gradlew --build-cache "$TASKS"
+echo ">> ./gradlew ${TASKS[*]}"
+time ./gradlew --build-cache "${TASKS[@]}"
 
 echo
 echo "== Готовые APK =="
