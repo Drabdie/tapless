@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_description">AI Phone Agent читает экран и выполняет ваши команды: нажимает, вводит текст, листает. Банки и платежи заблокированы. Остановить агента можно кнопкой STOP в приложении.</string>
+</resources>
