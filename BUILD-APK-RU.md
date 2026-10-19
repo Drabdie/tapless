@@ -22,9 +22,13 @@ Workflow самостоятельно устанавливает JDK 17 и Andro
 Требуются JDK 17, Android SDK Platform 35 и доступ к `google()`/`mavenCentral()` для скачивания Gradle и зависимостей. Укажите путь к SDK в `ANDROID_HOME` или `ANDROID_SDK_ROOT`, затем из папки проекта выполните:
 
 ```bash
-chmod +x gradlew build-apk.sh
-./build-apk.sh
+chmod +x gradlew build-apk.sh build-fast.sh
+./build-fast.sh          # быстро: оба debug APK одной командой (рекомендуется)
+./build-fast.sh main     # только Main App — самый частый кейс
+./build-apk.sh           # полная сборка обоих APK (эквивалент)
 ```
+
+`build-fast.sh` использует включённые в `gradle.properties` Gradle daemon, configuration cache, parallel и build cache: повторная сборка после правки кода — ~15–20 секунд, полностью из кэша — ~2 секунды. Готовые APK дополнительно складываются в `build/apk/`.
 
 Если SDK находится в нестандартной папке, создайте `local.properties` вручную, например:
 

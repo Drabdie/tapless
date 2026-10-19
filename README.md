@@ -145,11 +145,27 @@ STOP вызывает `KillSwitch.kill()` и завершает текущую �
 
 ## Сборка
 
+### Быстро — одна команда
+
+```bash
+./build-fast.sh          # оба debug APK (Main App + Companion)
+./build-fast.sh main     # только Main App (самый частый кейс)
+./build-fast.sh release  # release APK (R8)
+```
+
+То же самое напрямую через Gradle (задача `apk` собирает оба приложения и складывает их в
+`build/apk/`):
+
 ```bash
 export ANDROID_HOME=/opt/android-sdk   # путь к вашему Android SDK
-./gradlew assembleDebug                # соберёт оба приложения
-./gradlew test                         # юнит-тесты
+./gradlew apk            # оба debug APK одной командой
+./gradlew apkMain        # только Main App
+./gradlew test           # юнит-тесты
 ```
+
+Сборка уже оптимизирована под скорость (`gradle.properties`): включены **Gradle daemon**,
+**configuration cache**, **parallel** и **build cache**. Повторная сборка после правки кода —
+~20 секунд, полностью из кэша — ~5 секунд.
 
 Артефакты:
 
@@ -157,6 +173,7 @@ export ANDROID_HOME=/opt/android-sdk   # путь к вашему Android SDK
 |------|----------|
 | `app/build/outputs/apk/debug/app-debug.apk` | Main App (debug, подписан debug-ключом) |
 | `agent-companion/build/outputs/apk/debug/agent-companion-debug.apk` | Companion Agent (debug) |
+| `build/apk/*.apk` | Обе debug-сборки, скопированные в одну папку |
 
 Собрать по отдельности:
 
