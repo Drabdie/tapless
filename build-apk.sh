@@ -32,11 +32,19 @@ if [[ ! -f local.properties ]]; then
   printf 'sdk.dir=%s\n' "$SDK_DIR" > local.properties
 fi
 chmod +x ./gradlew
-./gradlew --no-daemon --stacktrace :app:assembleDebug
-APK="app/build/outputs/apk/debug/app-debug.apk"
-if [[ ! -s "$APK" ]]; then
-  echo "ERROR: Gradle completed but APK was not found at $APK" >&2
+./gradlew --no-daemon --stacktrace :app:assembleDebug :agent-companion:assembleDebug
+
+APP_APK="app/build/outputs/apk/debug/app-debug.apk"
+COMPANION_APK="agent-companion/build/outputs/apk/debug/agent-companion-debug.apk"
+if [[ ! -s "$APP_APK" ]]; then
+  echo "ERROR: Gradle completed but APK was not found at $APP_APK" >&2
   exit 3
 fi
-echo "BUILD_OK: $PWD/$APK"
-sha256sum "$APK"
+if [[ ! -s "$COMPANION_APK" ]]; then
+  echo "ERROR: Gradle completed but APK was not found at $COMPANION_APK" >&2
+  exit 3
+fi
+echo "BUILD_OK: $PWD/$APP_APK"
+sha256sum "$APP_APK"
+echo "BUILD_OK: $PWD/$COMPANION_APK"
+sha256sum "$COMPANION_APK"

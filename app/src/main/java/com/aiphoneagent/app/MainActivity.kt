@@ -20,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.aiphoneagent.agent.AgentRunRoute
 import com.aiphoneagent.chat.ChatRoute
 import com.aiphoneagent.onboarding.OnboardingRoute
+import com.aiphoneagent.scenarios.ScenarioRoute
 import com.aiphoneagent.ui.AiAgentTheme
 import com.aiphoneagent.ui.LoadingIndicator
 import dagger.hilt.android.AndroidEntryPoint
@@ -74,13 +75,23 @@ class MainActivity : ComponentActivity() {
                             ChatRoute(
                                 onOpenTask = { id -> nav.navigate("agent/$id") },
                                 onSettings = { nav.navigate("settings") },
+                                onScenarios = { nav.navigate("scenarios") },
                             )
                         }
                         composable("agent/{taskId}") {
                             AgentRunRoute(onBack = { nav.popBackStack() })
                         }
+                        composable("scenarios") {
+                            ScenarioRoute(
+                                onRun = { id -> nav.navigate("agent/$id") },
+                                onBack = { nav.popBackStack() },
+                            )
+                        }
                         composable("settings") {
-                            OnboardingRoute(onFinished = { nav.popBackStack() })
+                            SettingsRoute(
+                                onBack = { nav.popBackStack() },
+                                onOpenApiKey = { nav.navigate("onboarding") },
+                            )
                         }
                     }
                 }

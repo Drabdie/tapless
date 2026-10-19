@@ -4,8 +4,8 @@
 
 1. Распакуйте архив проекта.
 2. Загрузите папку `ai-phone-agent` в новый GitHub-репозиторий (вместе с `.github/workflows/build-apk.yml`). Не загружайте `local.properties`, ключи API или keystore.
-3. Откройте вкладку **Actions** в репозитории. Запустите workflow **Build Android APK** через **Run workflow** (либо сделайте push в `main`/`master`).
-4. После успешного завершения откройте запуск workflow и скачайте артефакт **ai-phone-agent-debug-apk** внизу страницы. Внутри находится `app-debug.apk`.
+3. Откройте вкладку **Actions** в репозитории. Запустите workflow **Build Android APKs** через **Run workflow** (либо сделайте push в `main`/`master`/`DraD`).
+4. После успешного завершения откройте запуск workflow и скачайте артефакты **ai-phone-agent-debug-apk** (`app-debug.apk`) и **ai-phone-agent-companion-debug-apk** (`agent-companion-debug.apk`) внизу страницы. Отдельная job **Unit tests** прогоняет 41 юнит-тест.
 
 Workflow самостоятельно устанавливает JDK 17 и Android SDK Platform 35 / Build Tools 35.0.0. OpenAI API-ключ для компиляции не нужен; его следует ввести в приложении после установки.
 
@@ -14,8 +14,8 @@ Workflow самостоятельно устанавливает JDK 17 и Andro
 1. Установите Android Studio и JDK 17.
 2. В SDK Manager установите **Android SDK Platform 35**, **Android SDK Build-Tools 35.0.0** и **Android SDK Platform-Tools**.
 3. Откройте папку `ai-phone-agent` как проект Gradle, дождитесь синхронизации.
-4. Выберите задачу Gradle `:app:assembleDebug` и запустите её.
-5. Готовый APK: `app/build/outputs/apk/debug/app-debug.apk`.
+4. Выберите задачу Gradle `:app:assembleDebug` (Main App) и/или `:agent-companion:assembleDebug` (Companion Agent) и запустите её.
+5. Готовые APK: `app/build/outputs/apk/debug/app-debug.apk` и `agent-companion/build/outputs/apk/debug/agent-companion-debug.apk`.
 
 ## Сборка локально в Linux / macOS
 
@@ -34,6 +34,8 @@ sdk.dir=/absolute/path/to/Android/Sdk
 
 ## Установка на телефон
 
-Передайте `app-debug.apk` на Android-телефон и откройте файл, разрешив установку из выбранного источника при запросе системы. После установки откройте приложение, добавьте собственный ключ провайдера LLM в настройках. Для управления интерфейсом других приложений отдельно включите службу **AI Phone Agent** в настройках специальных возможностей Android.
+**Main App.** Передайте `app-debug.apk` на Android-телефон и откройте файл, разрешив установку из выбранного источника при запросе системы. После установки откройте приложение, добавьте собственный ключ провайдера LLM в настройках. Для управления интерфейсом других приложений отдельно включите службу **AI Phone Agent** в настройках специальных возможностей Android.
 
-Это **debug APK** для установки и тестирования, он не подписан release-ключом для публикации в Google Play.
+**Companion Agent (опционально).** Установите `agent-companion-debug.apk`, включите его службу специальных возможностей и запустите MCP-сервер (кнопка в приложении). Сервер слушает `http://127.0.0.1:8765/mcp` и нужен для управления телефоном из Claude Desktop, Cursor и других MCP-клиентов.
+
+Это **debug APK** для установки и тестирования, они не подписаны release-ключом для публикации в Google Play.

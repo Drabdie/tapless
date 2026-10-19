@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":core-ui"))
     implementation(project(":agent-accessibility"))
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.coroutines.android)
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)

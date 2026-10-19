@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.aiphoneagent.common.ActionLogEntry
 import com.aiphoneagent.common.ActionLogRepository
+import com.aiphoneagent.common.SavedScenario
+import com.aiphoneagent.common.ScenarioRepository
 import com.aiphoneagent.common.TaskRecord
 import com.aiphoneagent.common.TaskRepository
 import dagger.Module
@@ -62,7 +64,27 @@ class ActionLogRepositoryImpl(private val dao: ActionLogDao) : ActionLogReposito
     }
 }
 
+class ScenarioRepositoryImpl(private val dao: ScenarioDao) : ScenarioRepository {
+    override suspend fun create(name: String, prompt: String, paramsJson: String): Long {
+        return dao.insert(
+            SavedScenarioEntity(
+                name = name.trim(),
+                prompt = prompt.trim(),
+                paramsJson = paramsJson,
+                createdAt = System.currentTimeMillis(),
+            ),
+        )
+    }
+
+    override fun observeAll(): Flow<List<SavedScenario>> =
+        dao.observeAll().map { list -> list.map { it.toScenario() } }
+
+    override suspend fun delete(id: Long) = dao.delete(id)
+}
+
 private fun TaskEntity.toRecord() = TaskRecord(id, prompt, status, createdAt, finishedAt, language)
+
+private fun SavedScenarioEntity.toScenario() = SavedScenario(id, name, prompt, paramsJson, createdAt)
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -86,4 +108,8 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun logs(dao: ActionLogDao): ActionLogRepository = ActionLogRepositoryImpl(dao)
+
+    @Provides
+    @Singleton
+    fun scenarios(dao: ScenarioDao): ScenarioRepository = ScenarioRepositoryImpl(dao)
 }

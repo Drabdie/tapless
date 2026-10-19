@@ -22,8 +22,13 @@ include(
     ":core-ui",
     ":core-network",
     ":core-database",
+    ":core-vision",
+    ":core-mcp",
     ":agent-accessibility",
     ":feature-chat",
     ":feature-agent",
     ":feature-onboarding",
+    ":feature-scenarios",
+    ":feature-bubble",
+    ":agent-companion",
 )

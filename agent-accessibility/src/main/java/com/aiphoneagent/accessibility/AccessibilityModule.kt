@@ -7,6 +7,7 @@ import android.text.TextUtils
 import com.aiphoneagent.common.ActionExecutor
 import com.aiphoneagent.common.ScreenObserver
 import com.aiphoneagent.common.ScreenObserverImpl
+import com.aiphoneagent.common.ScreenshotProvider
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -21,6 +22,10 @@ abstract class AccessibilityModule {
     @Binds
     @Singleton
     abstract fun bindExecutor(impl: AccessibilityActionExecutor): ActionExecutor
+
+    @Binds
+    @Singleton
+    abstract fun bindScreenshotProvider(impl: AccessibilityScreenshotProvider): ScreenshotProvider
 
     companion object {
         @Provides

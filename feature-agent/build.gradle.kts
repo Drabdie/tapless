@@ -23,6 +23,8 @@ dependencies {
     implementation(project(":core-common"))
     implementation(project(":core-ui"))
     implementation(project(":core-network"))
+    implementation(project(":core-vision"))
+    implementation(project(":core-mcp"))
     implementation(project(":agent-accessibility"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.coroutines.android)

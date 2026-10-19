@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material3.Icon
@@ -78,6 +79,7 @@ class ChatViewModel @Inject constructor(
 fun ChatRoute(
     onOpenTask: (Long) -> Unit,
     onSettings: () -> Unit,
+    onScenarios: () -> Unit,
     viewModel: ChatViewModel = hiltViewModel(),
 ) {
     val history by viewModel.history.collectAsStateWithLifecycle(emptyList())
@@ -90,6 +92,7 @@ fun ChatRoute(
         onSend = viewModel::send,
         onOpen = onOpenTask,
         onSettings = onSettings,
+        onScenarios = onScenarios,
     )
 }
 
@@ -100,6 +103,7 @@ fun ChatScreen(
     onSend: (String) -> Unit,
     onOpen: (Long) -> Unit,
     onSettings: () -> Unit,
+    onScenarios: () -> Unit,
 ) {
     var draft by rememberSaveable { mutableStateOf("") }
     Column(
@@ -119,6 +123,9 @@ fun ChatScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+            }
+            IconButton(onClick = onScenarios) {
+                Icon(Icons.Outlined.Bookmarks, contentDescription = "Сценарии")
             }
             IconButton(onClick = onSettings) {
                 Icon(Icons.Outlined.Settings, contentDescription = "Настройки")
@@ -179,6 +186,7 @@ fun ChatScreen(
                 shape = RoundedCornerShape(16.dp),
                 maxLines = 4,
             )
+            VoiceMicButton(onResult = { draft = it })
             IconButton(
                 onClick = {
                     onSend(draft)

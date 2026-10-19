@@ -1,21 +1,21 @@
-# AI Handoff: Build AI Phone Agent APK
+# AI Handoff: Build AI Phone Agent APKs
 
-You are given a complete Android multi-module project. Your **only goal** is to produce a debug APK that installs on a real device.
+You are given a complete Android multi-module project. Your **only goal** is to produce debug APKs that install on a real device.
 
 ## Project summary
 
-- **Name:** AI Phone Agent (MVP)
-- **Stack:** Kotlin, Jetpack Compose, Material 3, Hilt, Room, Coroutines, OkHttp
+- **Name:** AI Phone Agent (Main App) + Companion Agent
+- **Stack:** Kotlin, Jetpack Compose, Material 3, Hilt, Room, Coroutines, OkHttp, kotlinx.serialization
 - **Min SDK:** 26 · **Compile/Target SDK:** 35 · **JDK:** 17
-- **Modules:** `app`, `core-common`, `core-ui`, `core-network`, `core-database`, `agent-accessibility`, `feature-chat`, `feature-agent`, `feature-onboarding`
+- **Modules (14):** `app`, `agent-companion`, `core-common`, `core-ui`, `core-network`, `core-database`, `core-vision`, `core-mcp`, `agent-accessibility`, `feature-chat`, `feature-agent`, `feature-onboarding`, `feature-scenarios`, `feature-bubble`
 - **LLM:** BYOK — OpenAI, Anthropic, Gemini, OpenRouter, Groq, Ollama
-- **Key feature:** Accessibility Service drives UI actions from natural-language plans
+- **Key features:** Accessibility Service drives UI actions from natural-language plans; hybrid Accessibility + Vision screen understanding; saved scenarios; floating bubble; voice input; MCP server in the Companion app
 
 ## Success criteria
 
 1. `./gradlew assembleDebug` exits 0
-2. File exists: `app/build/outputs/apk/debug/app-debug.apk`
-3. APK is installable (`adb install -r …` or sideload)
+2. Files exist: `app/build/outputs/apk/debug/app-debug.apk` and `agent-companion/build/outputs/apk/debug/agent-companion-debug.apk`
+3. APKs are installable (`adb install -r …` or sideload)
 
 Do **not** rewrite the app. Fix only what blocks the build.
 
@@ -87,11 +87,12 @@ echo "sdk.dir=$ANDROID_HOME" > local.properties
 chmod +x gradlew
 ./gradlew assembleDebug --no-daemon --stacktrace
 
-# 5. Locate APK
+# 5. Locate APKs
 ls -la app/build/outputs/apk/debug/app-debug.apk
+ls -la agent-companion/build/outputs/apk/debug/agent-companion-debug.apk
 ```
 
-**Output artifact to deliver:** `app/build/outputs/apk/debug/app-debug.apk`
+**Output artifacts to deliver:** `app/build/outputs/apk/debug/app-debug.apk` and `agent-companion/build/outputs/apk/debug/agent-companion-debug.apk`
 
 ---
 
@@ -136,6 +137,8 @@ Ensure access to `google()` and `mavenCentral()`. Corporate proxies may need `gr
 
 ```bash
 adb install -r app/build/outputs/apk/debug/app-debug.apk
+# optional companion (MCP server):
+adb install -r agent-companion/build/outputs/apk/debug/agent-companion-debug.apk
 ```
 
 On device:
@@ -154,15 +157,20 @@ ai-phone-agent/
   gradle.properties
   gradlew / gradlew.bat
   gradle/wrapper/
-  app/
+  app/                 # Main App (UI, chat, agent runner, settings)
+  agent-companion/     # Companion Agent (Accessibility + MCP server)
   core-common/
   core-ui/
-  core-network/      # LlmClient: OpenAI, Anthropic, Gemini, OpenRouter, Groq, Ollama
+  core-network/        # LlmClient: OpenAI, Anthropic, Gemini, OpenRouter, Groq, Ollama
   core-database/
+  core-vision/         # VisionAnalyzer + ScreenUnderstandingBuilder
+  core-mcp/            # MCP JSON-RPC 2.0 + MiniHttpServer
   agent-accessibility/
   feature-chat/
   feature-agent/
   feature-onboarding/
+  feature-scenarios/
+  feature-bubble/
   docs/
   README.md
 ```
@@ -178,8 +186,9 @@ ai-phone-agent/
 ## Minimal verification
 
 ```bash
-./gradlew :app:assembleDebug
-test -f app/build/outputs/apk/debug/app-debug.apk && echo BUILD_OK
+./gradlew :app:assembleDebug :agent-companion:assembleDebug
+test -f app/build/outputs/apk/debug/app-debug.apk && echo MAIN_BUILD_OK
+test -f agent-companion/build/outputs/apk/debug/agent-companion-debug.apk && echo COMPANION_BUILD_OK
 ```
 
 ---
@@ -190,6 +199,7 @@ test -f app/build/outputs/apk/debug/app-debug.apk && echo BUILD_OK
 Unpack the attached ai-phone-agent project. Install JDK 17 and Android SDK
 platform 35 + build-tools 35. Create local.properties with sdk.dir.
 Run ./gradlew assembleDebug --no-daemon. Fix only environment/config/compile
-errors blocking the build. Deliver app/build/outputs/apk/debug/app-debug.apk.
+errors blocking the build. Deliver app/build/outputs/apk/debug/app-debug.apk
+and agent-companion/build/outputs/apk/debug/agent-companion-debug.apk.
 Do not redesign the app. Follow AI_BUILD_INSTRUCTIONS.md in the archive.
 ```
